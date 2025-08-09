@@ -2159,26 +2159,54 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                     const videoPlayer = document.querySelector('.video-player');
                     const videoPlaceholder = document.querySelector('.video-placeholder');
                     const videoLoading = document.querySelector('.video-loading');
-                    
+
                     // 检查视频URL是否有效
                     if (!videoUrl || videoUrl === '') {
                         alert('视频URL未找到或无效');
                         return;
                     }
-                    
-                    // 隐藏加载状态和占位符
-                    if (videoLoading) {
-                        videoLoading.classList.remove('show');
-                    }
+
+                    // --- 修改从这里开始 ---
+
+                    // 1. 隐藏占位符，显示加载动画
                     videoPlaceholder.style.display = 'none';
-                    
-                    // 显示视频播放器
-                    videoPlayer.classList.add('active');
+                    if (videoLoading) {
+                        videoLoading.classList.add('show'); // 假设 'show' 类会让它显示
+                    }
+                    videoPlayer.classList.remove('active'); // 先不显示播放器
+
+                    // 2. 关键：监听 canplay 事件，这是告诉我们“可以播放了”的信号
+                    videoPlayer.addEventListener('canplay', function onCanPlay() {
+                        // 视频准备好了，现在可以播放了
+                        if (videoLoading) {
+                            videoLoading.classList.remove('show'); // 隐藏加载动画
+                        }
+                        videoPlayer.classList.add('active'); // 显示视频播放器
+                        videoPlayer.play(); // 在正确的时机播放！
+
+                        // 移除事件监听器，避免重复触发
+                        videoPlayer.removeEventListener('canplay', onCanPlay);
+                    });
+
+                    // 3. 添加健壮的错误处理，如果URL无效或CORS有问题会触发
+                    videoPlayer.addEventListener('error', function onError() {
+                        // 加载失败了
+                        if (videoLoading) {
+                            videoLoading.classList.remove('show'); // 隐藏加载动画
+                        }
+                        // (可选) 恢复占位图，并提示用户
+                        videoPlaceholder.style.display = 'block';
+                        alert('视频加载失败，请检查链接或网络。');
+
+                        // 移除事件监听器
+                        videoPlayer.removeEventListener('error', onError);
+                    });
+
+                    // 4. 最后再设置 src，这会启动整个加载过程
                     videoPlayer.src = videoUrl;
-                    videoPlayer.play();
                 });
             }
-            
+
             // 复制代码按钮
             const copyButton = document.getElementById('copyBtn');
             if (copyButton) {
