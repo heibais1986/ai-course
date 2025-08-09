@@ -1873,11 +1873,11 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
             `;
             
             // 添加其他部分（如果有）
-            if (content.howItWorks) {
+            if (content.whatIsLangChain) {
                 html += `
-                    <h2 class="section-heading">${content.howItWorks.title}</h2>
+                    <h2 class="section-heading">${content.whatIsLangChain.title}</h2>
                     <div class="content-text">
-                        ${content.howItWorks.content}
+                        ${content.whatIsLangChain.content}
                     </div>
                 `;
             }
@@ -1900,20 +1900,11 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                 `;
             }
             
-            if (content.promptsSection) {
+            if (content.components) {
                 html += `
-                    <h2 class="section-heading">${content.promptsSection.title}</h2>
+                    <h2 class="section-heading">${content.components.title}</h2>
                     <div class="content-text">
-                        ${content.promptsSection.content}
-                    </div>
-                `;
-            }
-            
-            if (content.types) {
-                html += `
-                    <h2 class="section-heading">${content.types.title}</h2>
-                    <div class="content-text">
-                        ${content.types.content}
+                        ${content.components.content}
                     </div>
                 `;
             }
@@ -1990,7 +1981,7 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
             // 添加讨论项
             content.discussion.forEach(discussion => {
                 html += `
-                    <li class="discussion-item">
+                    <li class="discussion-item" data-discussion-id="${discussion.id}">
                         <div class="discussion-meta">
                             <div class="discussion-author">${discussion.author}</div>
                             <div class="discussion-date">${discussion.date}</div>
@@ -1999,13 +1990,49 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                             ${discussion.content}
                         </div>
                         <div class="discussion-actions">
-                            <div class="discussion-action">
+                            <div class="discussion-action like-action">
                                 <i class="far fa-thumbs-up"></i>
                                 <span>${discussion.likes}</span>
                             </div>
-                            <div class="discussion-action">
+                            <div class="discussion-action reply-toggle">
                                 <i class="far fa-comment"></i>
-                                <span>${discussion.replies} 回复</span>
+                                <span>${discussion.replies.length} 回复</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 回复区域 -->
+                        <div class="replies-container" id="replies-${discussion.id}">
+                            <div class="replies-list">
+                `;
+                
+                // 添加回复项
+                discussion.replies.forEach(reply => {
+                    html += `
+                        <div class="reply-item" data-reply-id="${reply.id}">
+                            <div class="reply-meta">
+                                <div class="reply-author">${reply.author}</div>
+                                <div class="reply-date">${reply.date}</div>
+                            </div>
+                            <div class="reply-content">${reply.content}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                            </div>
+                            
+                            <!-- 回复表单 -->
+                            <div class="reply-form" id="reply-form-${discussion.id}">
+                                <textarea class="reply-textarea" placeholder="写下你的回复..."></textarea>
+                                <div class="reply-form-actions">
+                                    <button class="reply-cancel-btn">取消</button>
+                                    <button class="reply-submit-btn" data-discussion-id="${discussion.id}">发布回复</button>
+                                </div>
+                            </div>
+                            
+                            <div class="discussion-action add-reply-action" data-discussion-id="${discussion.id}">
+                                <i class="fas fa-plus"></i>
+                                <span>添加回复</span>
                             </div>
                         </div>
                     </li>
@@ -2059,84 +2086,108 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                 });
             }
             
-            // 选项卡切换
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    document.querySelectorAll('.tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-            
             // 新讨论按钮
             const newDiscussionBtn = document.querySelector('.new-discussion-btn');
             if (newDiscussionBtn) {
                 newDiscussionBtn.addEventListener('click', function() {
-                    const discussionList = document.querySelector('.discussion-list');
-                    const newDiscussion = document.createElement('li');
-                    newDiscussion.className = 'discussion-item';
-                    newDiscussion.innerHTML = `
-                        <div class="discussion-meta">
-                            <div class="discussion-author">用户</div>
-                            <div class="discussion-date">刚刚</div>
-                        </div>
-                        <div class="discussion-content">
-                            <textarea placeholder="输入您的问题..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 80px;"></textarea>
-                            <div style="margin-top: 10px; text-align: right;">
-                                <button style="background-color: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">发布</button>
-                            </div>
-                        </div>
-                    `;
-                    discussionList.insertBefore(newDiscussion, discussionList.firstChild);
-                    
-                    // 聚焦到文本框
-                    newDiscussion.querySelector('textarea').focus();
-                    
-                    // 发布按钮事件
-                    newDiscussion.querySelector('button').addEventListener('click', function() {
-                        const textarea = newDiscussion.querySelector('textarea');
-                        if (textarea.value.trim() !== '') {
-                            newDiscussion.querySelector('.discussion-content').innerHTML = textarea.value;
-                            newDiscussion.innerHTML += `
-                                <div class="discussion-actions">
-                                    <div class="discussion-action">
-                                        <i class="far fa-thumbs-up"></i>
-                                        <span>0</span>
-                                    </div>
-                                    <div class="discussion-action">
-                                        <i class="far fa-comment"></i>
-                                        <span>0 回复</span>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
+                    alert('新讨论功能正在开发中');
                 });
             }
             
-            // 讨论点赞功能
-            document.querySelectorAll('.discussion-action').forEach(action => {
-                action.addEventListener('click', function() {
-                    if (this.querySelector('.fa-thumbs-up')) {
-                        const countSpan = this.querySelector('span');
-                        let count = parseInt(countSpan.textContent);
-                        countSpan.textContent = count + 1;
+            // 回复切换按钮
+            const replyToggles = document.querySelectorAll('.reply-toggle');
+            replyToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const discussionItem = this.closest('.discussion-item');
+                    const discussionId = discussionItem.getAttribute('data-discussion-id');
+                    const repliesContainer = document.getElementById(`replies-${discussionId}`);
+                    
+                    repliesContainer.classList.toggle('show');
+                });
+            });
+            
+            // 添加回复按钮
+            const addReplyButtons = document.querySelectorAll('.add-reply-action');
+            addReplyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const discussionId = this.getAttribute('data-discussion-id');
+                    const replyForm = document.getElementById(`reply-form-${discussionId}`);
+                    
+                    replyForm.classList.toggle('show');
+                });
+            });
+            
+            // 回复取消按钮
+            const cancelReplyButtons = document.querySelectorAll('.reply-cancel-btn');
+            cancelReplyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const replyForm = this.closest('.reply-form');
+                    replyForm.classList.remove('show');
+                });
+            });
+            
+            // 回复提交按钮
+            const submitReplyButtons = document.querySelectorAll('.reply-submit-btn');
+            submitReplyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const discussionId = this.getAttribute('data-discussion-id');
+                    const replyForm = document.getElementById(`reply-form-${discussionId}`);
+                    const textarea = replyForm.querySelector('.reply-textarea');
+                    const replyContent = textarea.value.trim();
+                    
+                    if (replyContent) {
+                        // 创建新回复元素
+                        const newReply = document.createElement('div');
+                        newReply.className = 'reply-item';
                         
-                        // 切换图标
-                        const icon = this.querySelector('i');
+                        // 获取当前日期
+                        const currentDate = new Date();
+                        const formattedDate = `${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月${currentDate.getDate()}日`;
+                        
+                        // 设置回复内容
+                        newReply.innerHTML = `
+                            <div class="reply-meta">
+                                <div class="reply-author">用户</div>
+                                <div class="reply-date">${formattedDate}</div>
+                            </div>
+                            <div class="reply-content">${replyContent}</div>
+                        `;
+                        
+                        // 添加到回复列表
+                        const repliesList = replyForm.previousElementSibling;
+                        repliesList.appendChild(newReply);
+                        
+                        // 清空文本框并隐藏表单
+                        textarea.value = '';
+                        replyForm.classList.remove('show');
+                        
+                        // 更新回复计数
+                        const discussionItem = replyForm.closest('.discussion-item');
+                        const replyToggle = discussionItem.querySelector('.reply-toggle span');
+                        const currentCount = parseInt(replyToggle.textContent);
+                        replyToggle.textContent = `${currentCount + 1} 回复`;
+                    }
+                });
+            });
+            
+            // 点赞按钮
+            const likeButtons = document.querySelectorAll('.like-action');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const likeCount = this.querySelector('span');
+                    const currentCount = parseInt(likeCount.textContent);
+                    const icon = this.querySelector('i');
+                    
+                    if (icon.classList.contains('far')) {
+                        // 未点赞状态，点击后点赞
                         icon.classList.remove('far');
                         icon.classList.add('fas');
-                        
-                        // 防止重复点击
-                        this.style.pointerEvents = 'none';
+                        likeCount.textContent = currentCount + 1;
+                    } else {
+                        // 已点赞状态，点击后取消点赞
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                        likeCount.textContent = currentCount - 1;
                     }
                 });
             });
@@ -2144,7 +2195,7 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
 
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
-            // 加载默认课程内容
+            // 加载第一个课程
             updateContent('intro');
         });
     </script>
