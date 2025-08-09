@@ -2166,13 +2166,13 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                         return;
                     }
                     
-                    // 显示加载状态
+                    // 隐藏加载状态和占位符
                     if (videoLoading) {
-                        videoLoading.classList.add('show');
+                        videoLoading.classList.remove('show');
                     }
-                    
-                    // 直接显示视频播放器
                     videoPlaceholder.style.display = 'none';
+                    
+                    // 显示视频播放器
                     videoPlayer.classList.add('active');
                     videoPlayer.src = videoUrl;
                     videoPlayer.play();
