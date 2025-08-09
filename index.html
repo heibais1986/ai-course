@@ -240,6 +240,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            display: none;
         }
 
         .video-player.active {
@@ -260,6 +261,25 @@
             font-size: 18px;
             background-size: cover;
             background-position: center;
+        }
+
+        .video-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 16px;
+            z-index: 10;
+        }
+
+        .video-loading.show {
+            display: flex;
         }
 
         .video-overlay {
@@ -619,13 +639,13 @@
 
         /* 加载动画 */
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary-color);
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin: 0;
         }
 
         @keyframes spin {
@@ -746,7 +766,7 @@
                     level: "初级"
                 },
                 video: {
-                    url: "https://img.docman.edu.kg/file/1754708521725_langchain_c1_07_master__ec76028c_.mp4",
+                    url: "https://image.docman.edu.kg/1754708521725_langchain_c1_07_master__ec76028c_.mp4",
                     thumbnail: "https://i.imgur.com/g5s5i7F.jpg"
                 },
                 overview: {
@@ -858,7 +878,7 @@ print(llm(text))`
                     level: "初级"
                 },
                 video: {
-                    url: "https://img.docman.edu.kg/file/1754708521725_langchain_c1_07_master__ec76028c_.mp4",
+                    url: "https://image.docman.edu.kg/1754708521725_langchain_c1_07_master__ec76028c_.mp4",
                     thumbnail: "https://i.imgur.com/8qgB6Jd.jpg"
                 },
                 overview: {
@@ -964,7 +984,7 @@ print(chain.run("LangChain"))`
                     level: "初级"
                 },
                 video: {
-                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                    url: "https://img.docman.edu.kg/file/1754708521725_langchain_c1_07_master__ec76028c_.mp4",
                     thumbnail: "https://i.imgur.com/9zXZ5Y4.jpg"
                 },
                 overview: {
@@ -1087,6 +1107,10 @@ print(parsed_output)`
                     updated: "2023年10月",
                     level: "中级"
                 },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder.jpg"
+                },
                 overview: {
                     title: "记忆概述",
                     content: `
@@ -1194,6 +1218,10 @@ print(memory.buffer)`
                     duration: "15分钟",
                     updated: "2023年10月",
                     level: "初级"
+                },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder2.jpg"
                 },
                 overview: {
                     title: "LLMChain 概述",
@@ -1305,6 +1333,10 @@ print(f"Punchline: {joke.punchline}")`
                     updated: "2023年10月",
                     level: "中级"
                 },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder3.jpg"
+                },
                 overview: {
                     title: "顺序链概述",
                     content: `
@@ -1410,6 +1442,10 @@ print(review)`
                     duration: "25分钟",
                     updated: "2023年10月",
                     level: "中级"
+                },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder4.jpg"
                 },
                 overview: {
                     title: "路由链概述",
@@ -1572,6 +1608,10 @@ print(chain.run("谁发明了印刷术？"))`
                     updated: "2023年10月",
                     level: "中级"
                 },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder5.jpg"
+                },
                 overview: {
                     title: "代理概述",
                     content: `
@@ -1670,6 +1710,10 @@ agent.run("当前美国总统是谁？他的年龄乘以2是多少？")`
                     updated: "2023年10月",
                     level: "中级"
                 },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder6.jpg"
+                },
                 overview: {
                     title: "工具概述",
                     content: `
@@ -1741,6 +1785,10 @@ agent.run("单词'elephant'的长度是多少？")`
                     duration: "30分钟",
                     updated: "2023年10月",
                     level: "高级"
+                },
+                video: {
+                    url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+                    thumbnail: "https://i.imgur.com/placeholder7.jpg"
                 },
                 overview: {
                     title: "代理类型概述",
@@ -1897,15 +1945,19 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
 
                 <!-- 视频播放器 -->
                 <div class="video-container">
-                    <div class="video-placeholder" style="background-image: url('${content.video.thumbnail}')">
+                    <div class="video-placeholder" style="background-image: url('${content.video ? content.video.thumbnail : ''}')">
                         <div class="video-overlay">
-                            <div class="play-button" data-video-url="${content.video.url}">
+                            <div class="play-button" data-video-url="${content.video ? content.video.url : ''}">
                                 <i class="fas fa-play"></i>
                             </div>
                         </div>
                     </div>
-                    <video class="video-player" controls>
-                        <source src="${content.video.url}" type="video/mp4">
+                    <div class="video-loading">
+                        <div class="loader"></div>
+                        <span style="margin-left: 10px;">加载中...</span>
+                    </div>
+                    <video class="video-player" controls preload="metadata" crossorigin="anonymous">
+                        <source src="" type="video/mp4">
                         您的浏览器不支持视频标签。
                     </video>
                 </div>
@@ -2106,13 +2158,23 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                     const videoUrl = this.getAttribute('data-video-url');
                     const videoPlayer = document.querySelector('.video-player');
                     const videoPlaceholder = document.querySelector('.video-placeholder');
+                    const videoLoading = document.querySelector('.video-loading');
                     
-                    // 隐藏占位符，显示视频播放器
+                    // 检查视频URL是否有效
+                    if (!videoUrl || videoUrl === '') {
+                        alert('视频URL未找到或无效');
+                        return;
+                    }
+                    
+                    // 显示加载状态
+                    if (videoLoading) {
+                        videoLoading.classList.add('show');
+                    }
+                    
+                    // 直接显示视频播放器
                     videoPlaceholder.style.display = 'none';
                     videoPlayer.classList.add('active');
-                    
-                    // 加载并播放视频
-                    videoPlayer.load();
+                    videoPlayer.src = videoUrl;
                     videoPlayer.play();
                 });
             }
