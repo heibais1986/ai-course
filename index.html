@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Course - Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+        :root {
+            --primary-color: #8A2BE2;
+            --secondary-color: #4B0082;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --content-padding: 30px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo span {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            overflow-y: auto;
+            position: fixed;
+            height: calc(100vh - var(--header-height));
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--secondary-color);
+        }
+
+        .course-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 20px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .section-title i {
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .section-title.active i {
+            transform: rotate(90deg);
+        }
+
+        .lesson-list {
+            list-style: none;
+            margin-top: 5px;
+        }
+
+        .lesson-item {
+            padding: 10px 20px 10px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .lesson-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .lesson-item.active {
+            background-color: rgba(138, 43, 226, 0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .lesson-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            font-size: 10px;
+        }
+
+        .lesson-item.active .lesson-icon {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 主内容区 */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: var(--content-padding);
+            max-width: 1000px;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .content-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .content-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .content-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* 视频播放器 */
+        .video-container {
+            background-color: black;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #222;
+            color: white;
+            font-size: 18px;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(138, 43, 226, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+        }
+
+        .play-button i {
+            font-size: 30px;
+            margin-left: 5px;
+        }
+
+        /* 课程内容区 */
+        .lesson-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-heading {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .content-text {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .content-text p {
+            margin-bottom: 15px;
+        }
+
+        /* 代码块 */
+        .code-block {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .code-title {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .copy-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .code-content {
+            color: #333;
+        }
+
+        /* 选项卡 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 讨论区 */
+        .discussion-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .discussion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .discussion-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .new-discussion-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .new-discussion-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .discussion-list {
+            list-style: none;
+        }
+
+        .discussion-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .discussion-item:last-child {
+            border-bottom: none;
+        }
+
+        .discussion-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .discussion-author {
+            font-weight: 500;
+        }
+
+        .discussion-date {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .discussion-content {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .discussion-actions {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .discussion-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .discussion-action:hover {
+            color: var(--primary-color);
+        }
+
+        /* 回复区域 */
+        .replies-container {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 2px solid var(--border-color);
+            display: none;
+        }
+
+        .replies-container.show {
+            display: block;
+        }
+
+        .reply-item {
+            padding: 10px 0;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .reply-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .reply-author {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .reply-date {
+            color: #888;
+        }
+
+        .reply-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .reply-form {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .reply-form.show {
+            display: block;
+        }
+
+        .reply-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .reply-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .reply-submit-btn, .reply-cancel-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .reply-submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .reply-submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .reply-cancel-btn {
+            background-color: #e0e0e0;
+            color: #555;
+        }
+
+        .reply-cancel-btn:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .header-right {
+                gap: 10px;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* 加载动画 */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="logo">
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <img src="logo.svg" alt="AI Learning Platform">
+            <span>AI Learning Platform</span>
+        </div>
+        <div class="header-right">
+            <div class="user-menu">
+                <div class="user-avatar">U</div>
+                <span>用户</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">LangChain 课程</div>
+            </div>
+            
+            <div class="course-section">
+                <div class="section-title active" id="section1">
+                    <i class="fas fa-chevron-right"></i>
+                    <span>第1部分：LangChain 简介</span>
+                </div>
+                <ul class="lesson-list">
+                    <li class="lesson-item active" data-lesson="intro">
+                        <div class="lesson-icon"><i class="fas fa-play"></i></div>
+                        <span>课程介绍</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="basics">
+                        <div class="lesson-icon">1</div>
+                        <span>LangChain 基础</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="models">
+                        <div class="lesson-icon">2</div>
+                        <span>模型、提示词和解析器</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="memory">
+                        <div class="lesson-icon">3</div>
+                        <span>记忆</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="course-section">
+                <div class="section-title" id="section2">
+                    <i class="fas fa-chevron-right"></i>
+                    <span>第2部分：链</span>
+                </div>
+                <ul class="lesson-list">
+                    <li class="lesson-item" data-lesson="llmchain">
+                        <div class="lesson-icon">4</div>
+                        <span>LLMChain</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="sequential">
+                        <div class="lesson-icon">5</div>
+                        <span>顺序链</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="router">
+                        <div class="lesson-icon">6</div>
+                        <span>路由链</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="course-section">
+                <div class="section-title" id="section3">
+                    <i class="fas fa-chevron-right"></i>
+                    <span>第3部分：代理</span>
+                </div>
+                <ul class="lesson-list">
+                    <li class="lesson-item" data-lesson="agents-intro">
+                        <div class="lesson-icon">7</div>
+                        <span>代理介绍</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="tools">
+                        <div class="lesson-icon">8</div>
+                        <span>工具</span>
+                    </li>
+                    <li class="lesson-item" data-lesson="agent-types">
+                        <div class="lesson-icon">9</div>
+                        <span>代理类型</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="content" id="mainContent">
+            <!-- 内容将通过JavaScript动态加载 -->
+        </main>
+    </div>
+
+    <script>
+        // 课程内容数据
+        const courseContent = {
+            intro: {
+                title: "课程介绍",
+                subtitle: "欢迎来到 LangChain 课程",
+                meta: {
+                    duration: "10分钟",
+                    updated: "2023年10月",
+                    level: "初级"
+                },
+                overview: {
+                    title: "课程概述",
+                    content: `
+                        <p>欢迎来到 LangChain 课程！本课程将带您深入了解 LangChain 框架，这是一个用于构建基于语言模型的应用程序的强大工具。</p>
+                        <p>LangChain 是一个开源框架，旨在简化基于大型语言模型（LLM）的应用程序的开发。它提供了一套工具和组件，使开发者能够轻松地构建复杂的应用程序，如聊天机器人、问答系统、文档分析工具等。</p>
+                        <p>在本课程中，您将学习：</p>
+                        <ul>
+                            <li>LangChain 的基本概念和架构</li>
+                            <li>如何使用模型、提示词和解析器</li>
+                            <li>如何构建和使用链（Chains）</li>
+                            <li>如何创建和使用代理（Agents）</li>
+                            <li>如何为您的应用程序添加记忆功能</li>
+                        </ul>
+                        <p>通过本课程，您将掌握使用 LangChain 构建强大应用程序的技能，并能够将这些知识应用到实际项目中。</p>
+                    `
+                },
+                whatIsLangChain: {
+                    title: "什么是 LangChain？",
+                    content: `
+                        <p>LangChain 是一个用于开发由语言模型驱动的应用程序的框架。它提供了一个结构化的方法来构建复杂的应用程序，使开发者能够专注于应用程序的逻辑，而不是底层实现的细节。</p>
+                        <p>LangChain 的主要组件包括：</p>
+                        <ul>
+                            <li><strong>模型（Models）</strong>：与各种语言模型（如 OpenAI 的 GPT 模型）的接口</li>
+                            <li><strong>提示词（Prompts）</strong>：管理和优化与语言模型交互的提示词</li>
+                            <li><strong>链（Chains）</strong>：将多个组件组合成一个序列，以完成更复杂的任务</li>
+                            <li><strong>代理（Agents）</strong>：使用语言模型作为推理引擎，决定使用哪些工具以及如何使用它们</li>
+                            <li><strong>记忆（Memory）</strong>：在多次交互之间持久化状态</li>
+                        </ul>
+                        <p>这些组件可以单独使用，也可以组合使用，以构建各种类型的应用程序。</p>
+                    `
+                },
+                codeExample: {
+                    title: "安装 LangChain",
+                    code: `# 安装 LangChain
+pip install langchain
+
+# 安装 OpenAI 依赖
+pip install openai
+
+# 简单示例
+from langchain.llms import OpenAI
+
+# 初始化模型
+llm = OpenAI(openai_api_key="YOUR_API_KEY")
+
+# 生成文本
+text = "什么是 LangChain？"
+print(llm(text))`
+                },
+                discussion: [
+                    {
+                        id: 1,
+                        author: "张明",
+                        date: "2023年10月15日",
+                        content: "这门课程适合初学者吗？需要什么先修知识？",
+                        likes: 12,
+                        replies: [
+                            {
+                                id: 101,
+                                author: "李华",
+                                date: "2023年10月15日",
+                                content: "这门课程非常适合初学者，只需要基本的Python知识即可。课程从基础概念开始讲解，逐步深入。"
+                            },
+                            {
+                                id: 102,
+                                author: "王芳",
+                                date: "2023年10月15日",
+                                content: "我同意李华的看法。我之前没有任何LangChain经验，但通过这门课程很快就上手了。讲师的讲解非常清晰。"
+                            },
+                            {
+                                id: 103,
+                                author: "赵伟",
+                                date: "2023年10月16日",
+                                content: "除了Python基础，了解一些机器学习的基本概念会更有帮助，但不是必需的。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        author: "李华",
+                        date: "2023年10月14日",
+                        content: "LangChain 和其他类似的框架相比有什么优势？",
+                        likes: 8,
+                        replies: [
+                            {
+                                id: 201,
+                                author: "孙明",
+                                date: "2023年10月14日",
+                                content: "LangChain的主要优势在于其模块化设计。你可以单独使用各个组件，也可以将它们组合起来构建复杂的应用。"
+                            },
+                            {
+                                id: 202,
+                                author: "周华",
+                                date: "2023年10月15日",
+                                content: "另一个优势是社区支持。LangChain有一个非常活跃的社区，遇到问题很容易找到解决方案。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            basics: {
+                title: "LangChain 基础",
+                subtitle: "了解 LangChain 的核心概念",
+                meta: {
+                    duration: "15分钟",
+                    updated: "2023年10月",
+                    level: "初级"
+                },
+                overview: {
+                    title: "LangChain 核心概念",
+                    content: `
+                        <p>在本课中，我们将深入了解 LangChain 的核心概念。这些概念是构建 LangChain 应用程序的基础，理解它们对于有效地使用框架至关重要。</p>
+                        <p>LangChain 的设计基于几个关键原则：</p>
+                        <ul>
+                            <li><strong>模块化</strong>：每个组件都可以单独使用，也可以与其他组件组合使用</li>
+                            <li><strong>可扩展性</strong>：可以轻松地添加新的组件或扩展现有组件</li>
+                            <li><strong>简单性</strong>：API 设计简单直观，易于使用</li>
+                            <li><strong>灵活性</strong>：支持多种语言模型和工具</li>
+                        </ul>
+                        <p>通过本课，您将学习如何使用 LangChain 的基本组件，以及如何将它们组合起来构建简单的应用程序。</p>
+                    `
+                },
+                components: {
+                    title: "主要组件",
+                    content: `
+                        <p>LangChain 由几个主要组件组成，每个组件都有特定的功能：</p>
+                        <ol>
+                            <li><strong>模型 I/O</strong>：这是与语言模型交互的核心部分，包括模型本身、提示词和输出解析器。</li>
+                            <li><strong>检索</strong>：这部分处理与外部数据的交互，包括文档加载、文本分割、向量存储和检索器。</li>
+                            <li><strong>链</strong>：链是将多个组件组合成一个序列的方式，可以创建复杂的工作流程。</li>
+                            <li><strong>代理</strong>：代理使用语言模型作为推理引擎，决定使用哪些工具以及如何使用它们。</li>
+                            <li><strong>记忆</strong>：记忆组件允许在多次交互之间持久化状态，使应用程序能够记住之前的交互。</li>
+                        </ol>
+                        <p>这些组件可以单独使用，也可以组合使用，以构建各种类型的应用程序。</p>
+                    `
+                },
+                codeExample: {
+                    title: "基本使用示例",
+                    code: `from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+
+# 初始化模型
+llm = OpenAI(temperature=0.9)
+
+# 创建提示词模板
+prompt = PromptTemplate(
+    input_variables=["product"],
+    template="什么是 {product}？请提供一个简短的定义。",
+)
+
+# 创建链
+chain = LLMChain(llm=llm, prompt=prompt)
+
+# 运行链
+print(chain.run("LangChain"))`
+                },
+                discussion: [
+                    {
+                        id: 3,
+                        author: "王芳",
+                        date: "2023年10月16日",
+                        content: "LangChain 支持哪些语言模型？除了 OpenAI 之外还有其他选择吗？",
+                        likes: 15,
+                        replies: [
+                            {
+                                id: 301,
+                                author: "陈明",
+                                date: "2023年10月16日",
+                                content: "LangChain支持多种语言模型，包括OpenAI、Anthropic、Hugging Face、Cohere等。你可以根据需要选择合适的模型。"
+                            },
+                            {
+                                id: 302,
+                                author: "林华",
+                                date: "2023年10月17日",
+                                content: "还可以使用本地模型，比如通过Hugging Face Transformers加载的模型。这对于需要离线使用或保护数据隐私的场景很有用。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        author: "赵强",
+                        date: "2023年10月15日",
+                        content: "提示词模板的最佳实践是什么？如何设计有效的提示词？",
+                        likes: 10,
+                        replies: [
+                            {
+                                id: 401,
+                                author: "吴明",
+                                date: "2023年10月15日",
+                                content: "设计有效的提示词需要考虑几个因素：明确的目标、清晰的指令、适当的示例和上下文。"
+                            },
+                            {
+                                id: 402,
+                                author: "郑华",
+                                date: "2023年10月16日",
+                                content: "我建议使用LangChain的PromptTemplate来创建结构化的提示词，这样可以更容易地管理和重用提示词。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            models: {
+                title: "模型、提示词和解析器",
+                subtitle: "深入理解 LangChain 的核心组件",
+                meta: {
+                    duration: "20分钟",
+                    updated: "2023年10月",
+                    level: "中级"
+                },
+                overview: {
+                    title: "模型、提示词和解析器",
+                    content: `
+                        <p>在本课中，我们将深入探讨 LangChain 的三个核心组件：模型、提示词和解析器。这些组件是构建任何 LangChain 应用程序的基础。</p>
+                        <p><strong>模型</strong>是 LangChain 与语言模型交互的接口。LangChain 支持多种语言模型，包括 OpenAI 的 GPT 模型、Anthropic 的 Claude 模型、Hugging Face 的模型等。</p>
+                        <p><strong>提示词</strong>是与语言模型交互的关键。好的提示词可以显著提高模型的性能。LangChain 提供了多种工具来管理和优化提示词。</p>
+                        <p><strong>解析器</strong>用于将模型的输出转换为结构化的数据。这对于构建需要特定输出格式的应用程序非常重要。</p>
+                        <p>通过本课，您将学习如何有效地使用这些组件，以及如何将它们组合起来构建强大的应用程序。</p>
+                    `
+                },
+                modelsSection: {
+                    title: "模型",
+                    content: `
+                        <p>LangChain 提供了与多种语言模型交互的接口。这些模型可以分为几类：</p>
+                        <ul>
+                            <li><strong>LLMs</strong>：大型语言模型，如 OpenAI 的 GPT-3.5 和 GPT-4</li>
+                            <li><strong>聊天模型</strong>：专门为对话优化的模型，如 OpenAI 的 ChatGPT</li>
+                            <li><strong>文本嵌入模型</strong>：用于将文本转换为向量表示的模型</li>
+                        </ul>
+                        <p>使用 LangChain，您可以轻松地切换不同的模型，而无需更改应用程序的其余部分。这使得您的应用程序可以随着模型的改进而不断改进。</p>
+                    `
+                },
+                promptsSection: {
+                    title: "提示词",
+                    content: `
+                        <p>提示词是与语言模型交互的关键。LangChain 提供了多种工具来管理和优化提示词：</p>
+                        <ul>
+                            <li><strong>提示词模板</strong>：允许您创建可重用的提示词模板，其中包含变量</li>
+                            <li><strong>示例选择器</strong>：从一组示例中选择最相关的示例，以帮助模型更好地理解任务</li>
+                            <li><strong>输出解析器</strong>：将模型的输出转换为结构化的数据</li>
+                        </ul>
+                        <p>通过这些工具，您可以创建更有效、更可靠的提示词，从而提高模型的性能。</p>
+                    `
+                },
+                codeExample: {
+                    title: "使用提示词模板和输出解析器",
+                    code: `from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.output_parsers import CommaSeparatedListOutputParser
+
+# 初始化模型
+llm = OpenAI(temperature=0.9)
+
+# 创建输出解析器
+output_parser = CommaSeparatedListOutputParser()
+
+# 创建提示词模板
+prompt = PromptTemplate(
+    template="列出5个关于 {topic} 的有趣事实。\\n{format_instructions}",
+    input_variables=["topic"],
+    partial_variables={"format_instructions": output_parser.get_format_instructions()},
+)
+
+# 创建链
+chain = LLMChain(llm=llm, prompt=prompt)
+
+# 运行链并解析输出
+output = chain.run("太空探索")
+parsed_output = output_parser.parse(output)
+print(parsed_output)`
+                },
+                discussion: [
+                    {
+                        id: 5,
+                        author: "刘伟",
+                        date: "2023年10月17日",
+                        content: "如何设计有效的提示词模板？有没有一些最佳实践？",
+                        likes: 18,
+                        replies: [
+                            {
+                                id: 501,
+                                author: "黄明",
+                                date: "2023年10月17日",
+                                content: "设计有效的提示词模板需要考虑几个方面：明确的目标、清晰的指令、适当的上下文和示例。"
+                            },
+                            {
+                                id: 502,
+                                author: "杨华",
+                                date: "2023年10月18日",
+                                content: "我建议使用Few-Shot Learning技术，在提示词中包含几个示例，这样可以帮助模型更好地理解任务。"
+                            },
+                            {
+                                id: 503,
+                                author: "徐明",
+                                date: "2023年10月18日",
+                                content: "还要注意提示词的长度。太长的提示词可能会增加成本和延迟，所以需要在效果和效率之间找到平衡。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        author: "陈静",
+                        date: "2023年10月16日",
+                        content: "输出解析器有哪些类型？如何选择适合我的用例的解析器？",
+                        likes: 12,
+                        replies: [
+                            {
+                                id: 601,
+                                author: "朱明",
+                                date: "2023年10月16日",
+                                content: "LangChain提供了多种输出解析器，如CommaSeparatedListOutputParser、PydanticOutputParser、StructuredOutputParser等。"
+                            },
+                            {
+                                id: 602,
+                                author: "高华",
+                                date: "2023年10月17日",
+                                content: "选择解析器主要取决于你需要的输出格式。如果需要列表格式，可以使用CommaSeparatedListOutputParser；如果需要结构化数据，可以使用PydanticOutputParser。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            memory: {
+                title: "记忆",
+                subtitle: "为您的应用程序添加记忆功能",
+                meta: {
+                    duration: "18分钟",
+                    updated: "2023年10月",
+                    level: "中级"
+                },
+                overview: {
+                    title: "记忆概述",
+                    content: `
+                        <p>在本课中，我们将学习如何为 LangChain 应用程序添加记忆功能。记忆是构建能够记住之前交互的应用程序的关键组件。</p>
+                        <p>记忆允许应用程序在多次交互之间持久化状态，这对于构建聊天机器人、个人助理等应用程序至关重要。没有记忆，每个交互都是独立的，应用程序无法记住之前的对话或操作。</p>
+                        <p>LangChain 提供了多种类型的记忆组件，从简单的缓冲记忆到更复杂的实体记忆。通过本课，您将学习如何选择和使用适合您应用程序需求的记忆类型。</p>
+                    `
+                },
+                memoryTypes: {
+                    title: "记忆类型",
+                    content: `
+                        <p>LangChain 提供了多种类型的记忆组件，每种类型都有其特定的用途：</p>
+                        <ul>
+                            <li><strong>ConversationBufferMemory</strong>：最简单的记忆类型，存储完整的对话历史</li>
+                            <li><strong>ConversationSummaryMemory</strong>：存储对话的摘要，而不是完整的对话历史</li>
+                            <li><strong>ConversationKGMemory</strong>：使用知识图谱存储对话中的实体和关系</li>
+                            <li><strong>ConversationEntityMemory</strong>：专门存储对话中提到的实体及其属性</li>
+                            <li><strong>ConversationBufferWindowMemory</strong>：只保留最近的 K 条消息</li>
+                        </ul>
+                        <p>选择哪种记忆类型取决于您的应用程序需求。例如，如果您需要记住完整的对话历史，可以使用 ConversationBufferMemory；如果您只关心最近的消息，可以使用 ConversationBufferWindowMemory。</p>
+                    `
+                },
+                codeExample: {
+                    title: "使用 ConversationBufferMemory",
+                    code: `from langchain.llms import OpenAI
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+
+# 初始化模型
+llm = OpenAI(temperature=0)
+
+# 创建记忆
+memory = ConversationBufferMemory()
+
+# 创建对话链
+conversation = ConversationChain(
+    llm=llm, 
+    memory=memory,
+    verbose=True
+)
+
+# 开始对话
+conversation.predict(input="你好，我叫张明。")
+conversation.predict(input="我的名字是什么？")
+conversation.predict(input="我刚才告诉你我叫什么名字？")
+
+# 查看记忆
+print(memory.buffer)`
+                },
+                discussion: [
+                    {
+                        id: 7,
+                        author: "周杰",
+                        date: "2023年10月18日",
+                        content: "如何处理长期记忆？ConversationBufferMemory 对于长对话会不会占用太多内存？",
+                        likes: 20,
+                        replies: [
+                            {
+                                id: 701,
+                                author: "马明",
+                                date: "2023年10月18日",
+                                content: "对于长对话，ConversationBufferMemory确实会占用较多内存。可以考虑使用ConversationSummaryMemory，它只存储对话摘要。"
+                            },
+                            {
+                                id: 702,
+                                author: "罗华",
+                                date: "2023年10月19日",
+                                content: "另一个选择是ConversationBufferWindowMemory，它只保留最近的K条消息。这样可以控制内存使用量。"
+                            },
+                            {
+                                id: 703,
+                                author: "何明",
+                                date: "2023年10月19日",
+                                content: "对于需要长期记忆的应用，可以考虑将记忆存储在外部数据库中，而不是内存中。LangChain支持多种持久化方式。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        author: "吴敏",
+                        date: "2023年10月17日",
+                        content: "有没有办法将记忆持久化到数据库，以便在会话之间保留？",
+                        likes: 15,
+                        replies: [
+                            {
+                                id: 801,
+                                author: "高明",
+                                date: "2023年10月17日",
+                                content: "是的，LangChain支持将记忆持久化到数据库。你可以使用SQLAlchemy、MongoDB等数据库来存储记忆。"
+                            },
+                            {
+                                id: 802,
+                                author: "梁华",
+                                date: "2023年10月18日",
+                                content: "具体实现方式取决于你使用的记忆类型。例如，对于ConversationBufferMemory，你可以继承它并重写保存和加载方法。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            llmchain: {
+                title: "LLMChain",
+                subtitle: "LangChain 中最基本的链",
+                meta: {
+                    duration: "15分钟",
+                    updated: "2023年10月",
+                    level: "初级"
+                },
+                overview: {
+                    title: "LLMChain 概述",
+                    content: `
+                        <p>在本课中，我们将学习 LLMChain，这是 LangChain 中最基本的链类型。LLMChain 由一个语言模型和一个提示词模板组成，是构建更复杂链的基础。</p>
+                        <p>LLMChain 的工作流程很简单：它接收输入，使用提示词模板生成提示词，将提示词发送给语言模型，然后返回模型的输出。尽管简单，但 LLMChain 是许多 LangChain 应用程序的核心组件。</p>
+                        <p>通过本课，您将学习如何创建和使用 LLMChain，以及如何将其与其他组件组合起来构建更复杂的应用程序。</p>
+                    `
+                },
+                howItWorks: {
+                    title: "LLMChain 的工作原理",
+                    content: `
+                        <p>LLMChain 的工作原理可以分为以下几个步骤：</p>
+                        <ol>
+                            <li>接收输入数据</li>
+                            <li>使用提示词模板生成提示词</li>
+                            <li>将提示词发送给语言模型</li>
+                            <li>接收并返回模型的输出</li>
+                        </ol>
+                        <p>提示词模板是 LLMChain 的关键部分。它定义了如何将输入数据转换为提示词。提示词模板可以包含变量，这些变量在运行时被替换为实际的输入数据。</p>
+                        <p>LLMChain 还可以与输出解析器一起使用，以将模型的输出转换为结构化的数据。这对于构建需要特定输出格式的应用程序非常有用。</p>
+                    `
+                },
+                codeExample: {
+                    title: "创建和使用 LLMChain",
+                    code: `from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from langchain.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+
+# 定义输出模型
+class Joke(BaseModel):
+    setup: str = Field(description="笑话的开头")
+    punchline: str = Field(description="笑话的结尾")
+
+# 初始化模型
+llm = OpenAI(temperature=0.9)
+
+# 创建输出解析器
+parser = PydanticOutputParser(pydantic_object=Joke)
+
+# 创建提示词模板
+prompt = PromptTemplate(
+    template="讲一个关于 {topic} 的笑话。\\n{format_instructions}",
+    input_variables=["topic"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+# 创建链
+chain = LLMChain(llm=llm, prompt=prompt)
+
+# 运行链并解析输出
+output = chain.run("程序员")
+joke = parser.parse(output)
+print(f"Setup: {joke.setup}")
+print(f"Punchline: {joke.punchline}")`
+                },
+                discussion: [
+                    {
+                        id: 9,
+                        author: "郑华",
+                        date: "2023年10月19日",
+                        content: "LLMChain 和直接使用语言模型有什么区别？什么时候应该使用 LLMChain？",
+                        likes: 14,
+                        replies: [
+                            {
+                                id: 901,
+                                author: "谢明",
+                                date: "2023年10月19日",
+                                content: "LLMChain的主要优势在于它将提示词模板和模型封装在一起，使代码更模块化和可重用。"
+                            },
+                            {
+                                id: 902,
+                                author: "韩华",
+                                date: "2023年10月20日",
+                                content: "当你需要使用相同的提示词模板多次调用模型时，使用LLMChain会更方便。它还可以与其他链组合使用。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 10,
+                        author: "孙丽",
+                        date: "2023年10月18日",
+                        content: "如何优化 LLMChain 的性能？有没有一些最佳实践？",
+                        likes: 11,
+                        replies: [
+                            {
+                                id: 1001,
+                                author: "邓明",
+                                date: "2023年10月18日",
+                                content: "优化LLMChain性能的关键是优化提示词模板。好的提示词可以显著提高输出质量和一致性。"
+                            },
+                            {
+                                id: 1002,
+                                author: "冯华",
+                                date: "2023年10月19日",
+                                content: "另一个优化方法是使用输出解析器，这样可以确保输出格式符合预期，减少后续处理的工作量。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            sequential: {
+                title: "顺序链",
+                subtitle: "按顺序执行多个链",
+                meta: {
+                    duration: "20分钟",
+                    updated: "2023年10月",
+                    level: "中级"
+                },
+                overview: {
+                    title: "顺序链概述",
+                    content: `
+                        <p>在本课中，我们将学习顺序链（Sequential Chains），这是一种按顺序执行多个链的链类型。顺序链允许您将多个简单的链组合成一个更复杂的工作流程。</p>
+                        <p>顺序链有两种主要类型：SimpleSequentialChain 和 SequentialChain。SimpleSequentialChain 适用于每个链只有一个输入和一个输出的情况，而 SequentialChain 适用于更复杂的情况，其中链可能有多个输入和输出。</p>
+                        <p>通过本课，您将学习如何创建和使用顺序链，以及如何利用它们构建更复杂的应用程序。</p>
+                    `
+                },
+                types: {
+                    title: "顺序链的类型",
+                    content: `
+                        <p>LangChain 提供了两种类型的顺序链：</p>
+                        <ul>
+                            <li><strong>SimpleSequentialChain</strong>：最简单的顺序链类型，其中每个链只有一个输入和一个输出。一个链的输出成为下一个链的输入。</li>
+                            <li><strong>SequentialChain</strong>：更复杂的顺序链类型，其中链可以有多个输入和输出。您可以指定每个链的输入来自哪里，以及输出到哪里去。</li>
+                        </ul>
+                        <p>SimpleSequentialChain 适用于简单的线性工作流程，而 SequentialChain 适用于更复杂的工作流程，其中可能需要将多个链的输出组合起来，或者将一个链的输出分发到多个链。</p>
+                    `
+                },
+                codeExample: {
+                    title: "使用 SimpleSequentialChain",
+                    code: `from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain, SimpleSequentialChain
+
+# 初始化模型
+llm = OpenAI(temperature=0.9)
+
+# 第一个链：生成剧本概要
+synopsis_template = """你是一位剧作家。根据剧名和时代背景，写一个剧本概要。
+
+剧名: {title}
+时代: {era}
+概要:"""
+synopsis_prompt = PromptTemplate(input_variables=["title", "era"], template=synopsis_template)
+synopsis_chain = LLMChain(llm=llm, prompt=synopsis_prompt)
+
+# 第二个链：根据概要写评论
+review_template = """你是《纽约时报》的戏剧评论家。根据以下剧本概要，写一篇戏剧评论。
+
+剧本概要:
+{synopsis}
+戏剧评论:"""
+review_prompt = PromptTemplate(input_variables=["synopsis"], template=review_template)
+review_chain = LLMChain(llm=llm, prompt=review_prompt)
+
+# 创建顺序链
+overall_chain = SimpleSequentialChain(chains=[synopsis_chain, review_chain], verbose=True)
+
+# 运行链
+review = overall_chain.run("悲剧", "维多利亚时代")
+print(review)`
+                },
+                discussion: [
+                    {
+                        id: 11,
+                        author: "马强",
+                        date: "2023年10月20日",
+                        content: "SimpleSequentialChain 和 SequentialChain 之间有什么区别？什么时候应该使用哪种？",
+                        likes: 16,
+                        replies: [
+                            {
+                                id: 1101,
+                                author: "唐明",
+                                date: "2023年10月20日",
+                                content: "SimpleSequentialChain适用于线性工作流，每个链只有一个输入和一个输出。而SequentialChain更灵活，可以处理多个输入和输出。"
+                            },
+                            {
+                                id: 1102,
+                                author: "萧华",
+                                date: "2023年10月21日",
+                                content: "如果你的工作流程是简单的A→B→C，使用SimpleSequentialChain。如果需要更复杂的路由或组合，使用SequentialChain。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 12,
+                        author: "林芳",
+                        date: "2023年10月19日",
+                        content: "顺序链中的错误如何处理？如果一个链失败了，整个链会停止吗？",
+                        likes: 13,
+                        replies: [
+                            {
+                                id: 1201,
+                                author: "彭明",
+                                date: "2023年10月19日",
+                                content: "默认情况下，如果一个链失败，整个顺序链会停止。但你可以通过自定义错误处理逻辑来改变这种行为。"
+                            },
+                            {
+                                id: 1202,
+                                author: "于华",
+                                date: "2023年10月20日",
+                                content: "可以考虑使用try-except块来捕获异常，并提供备用方案或错误信息，而不是让整个链失败。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            router: {
+                title: "路由链",
+                subtitle: "根据输入动态选择下一个链",
+                meta: {
+                    duration: "25分钟",
+                    updated: "2023年10月",
+                    level: "中级"
+                },
+                overview: {
+                    title: "路由链概述",
+                    content: `
+                        <p>在本课中，我们将学习路由链（Router Chains），这是一种根据输入动态选择下一个链的链类型。路由链允许您构建更灵活的应用程序，可以根据输入的内容或类型选择不同的处理路径。</p>
+                        <p>路由链由两部分组成：一个路由链（决定使用哪个目标链）和多个目标链（实际执行任务的链）。路由链根据输入的内容决定使用哪个目标链，然后将输入传递给选定的目标链。</p>
+                        <p>通过本课，您将学习如何创建和使用路由链，以及如何利用它们构建更智能、更灵活的应用程序。</p>
+                    `
+                },
+                howItWorks: {
+                    title: "路由链的工作原理",
+                    content: `
+                        <p>路由链的工作原理可以分为以下几个步骤：</p>
+                        <ol>
+                            <li>接收输入数据</li>
+                            <li>路由链分析输入数据，决定使用哪个目标链</li>
+                            <li>将输入数据传递给选定的目标链</li>
+                            <li>目标链处理输入数据并返回结果</li>
+                        </ol>
+                        <p>路由链通常使用 LLMRouterChain，它使用语言模型来决定使用哪个目标链。LLMRouterChain 需要一个提示词模板，该模板描述了每个目标链的功能，并指导语言模型如何选择合适的目标链。</p>
+                        <p>路由链的一个常见用例是多提示词路由，其中根据输入的类型选择不同的提示词模板。这允许您为不同类型的输入使用专门优化的提示词。</p>
+                    `
+                },
+                codeExample: {
+                    title: "使用 LLMRouterChain",
+                    code: `from langchain.llms import OpenAI
+from langchain.chains.router import MultiPromptChain
+from langchain.chains import ConversationChain
+from langchain.chains.llm import LLMChain
+from langchain.prompts import PromptTemplate
+from langchain.chains.router.llm_router import LLMRouterChain, RouterOutputParser
+from langchain.chains.router.multi_prompt_prompt import MULTI_PROMPT_ROUTER_TEMPLATE
+
+# 初始化模型
+llm = OpenAI(temperature=0)
+
+# 定义不同的提示词模板
+physics_template = """你是一位非常聪明的物理学教授。你擅长以简洁易懂的方式解释物理学概念。当你不知道某个问题的答案时，你会坦诚承认。
+
+这是一个问题：
+{input}"""
+
+math_template = """你是一位非常优秀的数学家。你擅长回答数学问题。你之所以这么优秀，是因为你能够将困难的问题分解成更小的部分，然后分别解决这些部分。
+
+这是一个问题：
+{input}"""
+
+history_template = """你是一位历史学家，对各个历史时期和文明都有深入的了解。你能够以引人入胜的方式讲述历史故事，并从中提炼出深刻的见解。
+
+这是一个问题：
+{input}"""
+
+# 创建提示词信息
+prompt_infos = [
+    {
+        "name": "physics",
+        "description": "适合回答物理学问题",
+        "prompt_template": physics_template
+    },
+    {
+        "name": "math", 
+        "description": "适合回答数学问题",
+        "prompt_template": math_template
+    },
+    {
+        "name": "history",
+        "description": "适合回答历史问题",
+        "prompt_template": history_template
+    }
+]
+
+# 创建目标链
+destination_chains = {}
+for p_info in prompt_infos:
+    name = p_info["name"]
+    prompt_template = p_info["prompt_template"]
+    prompt = PromptTemplate(template=prompt_template, input_variables=["input"])
+    chain = LLMChain(llm=llm, prompt=prompt)
+    destination_chains[name] = chain
+
+# 创建默认链
+default_chain = ConversationChain(llm=llm, output_key="text")
+
+# 创建路由模板
+destinations = [f"{p['name']}: {p['description']}" for p in prompt_infos]
+destinations_str = "\\n".join(destinations)
+router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(destinations=destinations_str)
+router_prompt = PromptTemplate(
+    template=router_template,
+    input_variables=["input"],
+    output_parser=RouterOutputParser(),
+)
+
+# 创建路由链
+router_chain = LLMRouterChain.from_llm(llm, router_prompt)
+
+# 创建多提示词链
+chain = MultiPromptChain(
+    router_chain=router_chain,
+    destination_chains=destination_chains,
+    default_chain=default_chain,
+    verbose=True
+)
+
+# 测试路由链
+print(chain.run("什么是黑洞？"))
+print(chain.run("2+2等于多少？"))
+print(chain.run("谁发明了印刷术？"))`
+                },
+                discussion: [
+                    {
+                        id: 13,
+                        author: "黄伟",
+                        date: "2023年10月21日",
+                        content: "路由链的性能如何？当有很多目标链时，路由链能够有效地选择正确的链吗？",
+                        likes: 17,
+                        replies: [
+                            {
+                                id: 1301,
+                                author: "董明",
+                                date: "2023年10月21日",
+                                content: "路由链的性能取决于提示词的设计和语言模型的能力。好的提示词可以帮助模型更准确地选择目标链。"
+                            },
+                            {
+                                id: 1302,
+                                author: "程华",
+                                date: "2023年10月22日",
+                                content: "当目标链很多时，可以考虑使用层次化路由，先进行粗分类，再进行细分类，这样可以提高准确性。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 14,
+                        author: "杨静",
+                        date: "2023年10月20日",
+                        content: "有没有办法动态添加新的目标链，而不需要重新定义整个路由链？",
+                        likes: 14,
+                        replies: [
+                            {
+                                id: 1401,
+                                author: "蔡明",
+                                date: "2023年10月20日",
+                                content: "可以通过修改destination_chains字典和更新路由提示词来动态添加新的目标链，但需要重新初始化路由链。"
+                            },
+                            {
+                                id: 1402,
+                                author: "潘华",
+                                date: "2023年10月21日",
+                                content: "另一种方法是使用自定义的路由逻辑，而不是依赖LLMRouterChain。这样可以在运行时动态添加目标链。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "agents-intro": {
+                title: "代理介绍",
+                subtitle: "使用语言模型作为推理引擎",
+                meta: {
+                    duration: "20分钟",
+                    updated: "2023年10月",
+                    level: "中级"
+                },
+                overview: {
+                    title: "代理概述",
+                    content: `
+                        <p>在本课中，我们将学习代理（Agents），这是 LangChain 中最强大的组件之一。代理使用语言模型作为推理引擎，决定使用哪些工具以及如何使用它们。</p>
+                        <p>与链不同，链是预定义的操作序列，代理可以根据输入动态决定操作序列。这使得代理能够处理更复杂的任务，特别是那些需要多步推理或访问外部资源的任务。</p>
+                        <p>通过本课，您将学习代理的基本概念、工作原理以及如何创建和使用简单的代理。</p>
+                    `
+                },
+                howItWorks: {
+                    title: "代理的工作原理",
+                    content: `
+                        <p>代理的工作流程通常包括以下步骤：</p>
+                        <ol>
+                            <li>接收用户输入</li>
+                            <li>语言模型决定使用哪些工具（如果有）</li>
+                            <li>执行选定的工具并获取结果</li>
+                            <li>将工具结果返回给语言模型</li>
+                            <li>语言模型根据工具结果生成最终响应</li>
+                        </ol>
+                        <p>这个过程可以重复多次，直到代理能够生成最终答案或完成用户请求的任务。</p>
+                        <p>代理的核心思想是让语言模型能够访问和使用工具。工具可以是任何东西：搜索引擎、计算器、数据库、API 等。代理根据用户的输入决定使用哪些工具以及如何使用它们。</p>
+                    `
+                },
+                codeExample: {
+                    title: "创建简单代理",
+                    code: `from langchain.agents import AgentType, initialize_agent, load_tools
+from langchain.llms import OpenAI
+
+# 初始化语言模型
+llm = OpenAI(temperature=0)
+
+# 加载工具
+tools = load_tools(["serpapi", "llm-math"], llm=llm)
+
+# 初始化代理
+agent = initialize_agent(
+    tools, 
+    llm, 
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, 
+    verbose=True
+)
+
+# 运行代理
+agent.run("当前美国总统是谁？他的年龄乘以2是多少？")`
+                },
+                discussion: [
+                    {
+                        id: 15,
+                        author: "徐明",
+                        date: "2023年10月22日",
+                        content: "代理和链的主要区别是什么？在什么情况下应该使用代理而不是链？",
+                        likes: 19,
+                        replies: [
+                            {
+                                id: 1501,
+                                author: "范明",
+                                date: "2023年10月22日",
+                                content: "链是预定义的操作序列，而代理可以根据输入动态决定操作序列。代理更适合需要灵活决策的复杂任务。"
+                            },
+                            {
+                                id: 1502,
+                                author: "娄华",
+                                date: "2023年10月23日",
+                                content: "例如，如果你需要根据用户查询决定使用哪个工具，或者需要多步推理，那么使用代理会更合适。"
+                            }
+                        ]
+                    },
+                    {
+                        id: 16,
+                        author: "朱华",
+                        date: "2023年10月21日",
+                        content: "如何评估代理的性能？有没有一些指标或方法？",
+                        likes: 15,
+                        replies: [
+                            {
+                                id: 1601,
+                                author: "鲁明",
+                                date: "2023年10月21日",
+                                content: "评估代理性能可以从几个方面考虑：准确性（是否得到正确答案）、效率（使用了多少步骤）、成本（API调用费用）等。"
+                            },
+                            {
+                                id: 1602,
+                                author: "韦华",
+                                date: "2023年10月22日",
+                                content: "可以使用测试集来评估代理在不同任务上的表现，也可以使用人工评估来检查输出质量。"
+                            }
+                        ]
+                    }
+                ]
+            },
+            tools: {
+                title: "工具",
+                subtitle: "为代理提供能力",
+                meta: {
+                    duration: "25分钟",
+                    updated: "2023年10月",
+                    level: "中级"
+                },
+                overview: {
+                    title: "工具概述",
+                    content: `
+                        <p>在本课中，我们将学习工具（Tools），这是代理执行任务的基本单元。工具是代理可以使用的任何函数或 API，它允许代理与外部世界交互。</p>
+                        <p>LangChain 提供了许多预定义的工具，如搜索引擎、计算器、数据库查询等。您也可以创建自定义工具，以满足特定的需求。</p>
+                        <p>通过本课，您将学习如何使用预定义的工具，以及如何创建自定义工具来扩展代理的能力。</p>
+                    `
+                },
+                types: {
+                    title: "工具类型",
+                    content: `
+                        <p>LangChain 提供了多种类型的工具，可以分为以下几类：</p>
+                        <ul>
+                            <li><strong>搜索工具</strong>：如 SerpAPI、Google Search 等，用于搜索互联网信息</li>
+                            <li><strong>计算工具</strong>：如计算器、Python REPL 等，用于执行计算任务</li>
+                            <li><strong>数据库工具</strong>：如 SQL 数据库查询工具，用于查询数据库</li>
+                            <li><strong>API 工具</strong>：如请求特定 API 的工具，用于与外部服务交互</li>
+                            <li><strong>文档工具</strong>：如 PDF 阅读器、网页抓取工具等，用于处理文档</li>
+                        </ul>
+                        <p>除了这些预定义的工具外，您还可以创建自定义工具。自定义工具可以是任何 Python 函数，只要它有清晰的描述和输入/输出规范。</p>
+                    `
+                },
+                codeExample: {
+                    title: "创建自定义工具",
+                    code: `from langchain.agents import tool
+
+@tool
+def get_word_length(word: str) -> int:
+    """返回单词的长度"""
+    return len(word)
+
+@tool
+def add_numbers(a: int, b: int) -> int:
+    """将两个数字相加"""
+    return a + b
+
+# 将自定义工具添加到代理
+tools = [get_word_length, add_numbers]
+agent = initialize_agent(
+    tools, 
+    llm, 
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, 
+    verbose=True
+)
+
+agent.run("单词'elephant'的长度是多少？")`
+                },
+                discussion: [
+                    {
+                        author: "何强",
+                        date: "2023年10月23日",
+                        content: "自定义工具的描述应该如何编写才能让代理更好地理解和使用？",
+                        likes: 21,
+                        replies: 11
+                    },
+                    {
+                        author: "罗敏",
+                        date: "2023年10月22日",
+                        content: "有没有办法限制代理使用某些工具？或者设置工具的使用优先级？",
+                        likes: 16,
+                        replies: 8
+                    }
+                ]
+            },
+            "agent-types": {
+                title: "代理类型",
+                subtitle: "了解不同类型的代理",
+                meta: {
+                    duration: "30分钟",
+                    updated: "2023年10月",
+                    level: "高级"
+                },
+                overview: {
+                    title: "代理类型概述",
+                    content: `
+                        <p>在本课中，我们将学习不同类型的代理。LangChain 提供了多种代理类型，每种类型都有其特定的用途和工作方式。</p>
+                        <p>不同类型的代理适用于不同的场景。有些代理适合简单的任务，有些则适合复杂的任务。了解不同类型的代理及其适用场景，可以帮助您选择最适合您需求的代理类型。</p>
+                        <p>通过本课，您将学习各种代理类型的特点、优缺点以及适用场景，以及如何选择和使用合适的代理类型。</p>
+                    `
+                },
+                types: {
+                    title: "主要代理类型",
+                    content: `
+                        <p>LangChain 提供了多种代理类型，以下是一些主要的代理类型：</p>
+                        <ul>
+                            <li><strong>Zero Shot ReAct</strong>：最常用的代理类型之一，根据工具的描述和用户输入决定使用哪些工具，而不需要任何示例。</li>
+                            <li><strong>ReAct Docstore</strong>：专门设计用于与文档存储交互，使用"思考-行动-观察"循环来查找和检索文档。</li>
+                            <li><strong>Self Ask With Search</strong>：专门设计用于回答需要分解为多个子问题的问题，首先生成后续问题，然后使用搜索引擎查找答案。</li>
+                            <li><strong>Conversational</strong>：专为对话设计的代理，能够记住之前的对话，并在多轮对话中保持上下文。</li>
+                            <li><strong>Plan and Execute</strong>：首先制定计划，然后执行计划中的每一步，适合复杂的任务。</li>
+                        </ul>
+                        <p>选择哪种代理类型取决于您的具体需求。例如，如果您需要回答需要多步推理的问题，可以使用 Self Ask With Search 代理；如果您需要与文档存储交互，可以使用 ReAct Docstore 代理。</p>
+                    `
+                },
+                codeExample: {
+                    title: "使用不同类型的代理",
+                    code: `from langchain.agents import AgentType, initialize_agent, load_tools
+from langchain.llms import OpenAI
+from langchain.memory import ConversationBufferMemory
+
+# 初始化语言模型
+llm = OpenAI(temperature=0)
+
+# 加载工具
+tools = load_tools(["serpapi", "llm-math"], llm=llm)
+
+# 创建记忆
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+# 初始化不同类型的代理
+
+# 1. Zero Shot ReAct 代理
+zero_shot_agent = initialize_agent(
+    tools, 
+    llm, 
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, 
+    verbose=True
+)
+
+# 2. Conversational 代理
+conversational_agent = initialize_agent(
+    tools, 
+    llm, 
+    agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, 
+    memory=memory,
+    verbose=True
+)
+
+# 3. Self Ask With Search 代理
+self_ask_agent = initialize_agent(
+    tools, 
+    llm, 
+    agent=AgentType.SELF_ASK_WITH_SEARCH, 
+    verbose=True
+)
+
+# 运行代理
+print("Zero Shot ReAct 代理:")
+zero_shot_agent.run("当前美国总统是谁？他的年龄乘以2是多少？")
+
+print("\\nConversational 代理:")
+conversational_agent.run("你好，我叫张明。")
+conversational_agent.run("我的名字是什么？")
+
+print("\\nSelf Ask With Search 代理:")
+self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
+                },
+                discussion: [
+                    {
+                        author: "高伟",
+                        date: "2023年10月24日",
+                        content: "如何选择适合我的用例的代理类型？有没有一些决策指南？",
+                        likes: 23,
+                        replies: 12
+                    },
+                    {
+                        author: "梁静",
+                        date: "2023年10月23日",
+                        content: "有没有办法组合不同类型的代理，或者创建自定义的代理类型？",
+                        likes: 18,
+                        replies: 9
+                    }
+                ]
+            }
+        };
+
+        // 侧边栏折叠/展开
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        // 章节折叠/展开
+        document.querySelectorAll('.section-title').forEach(section => {
+            section.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // 课程选择
+        document.querySelectorAll('.lesson-item').forEach(lesson => {
+            lesson.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.lesson-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // 添加活动状态到当前项
+                this.classList.add('active');
+                
+                // 获取课程ID
+                const lessonId = this.getAttribute('data-lesson');
+                
+                // 更新内容区域
+                updateContent(lessonId);
+            });
+        });
+
+        // 更新内容区域
+        function updateContent(lessonId) {
+            const content = courseContent[lessonId];
+            if (!content) return;
+            
+            const mainContent = document.getElementById('mainContent');
+            
+            // 构建内容HTML
+            let html = `
+                <div class="content-header">
+                    <h1 class="content-title">${content.title}</h1>
+                    <p class="content-subtitle">${content.subtitle}</p>
+                    <div class="content-meta">
+                        <div class="content-meta-item">
+                            <i class="far fa-clock"></i>
+                            <span>${content.meta.duration}</span>
+                        </div>
+                        <div class="content-meta-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>更新于 ${content.meta.updated}</span>
+                        </div>
+                        <div class="content-meta-item">
+                            <i class="fas fa-signal"></i>
+                            <span>${content.meta.level}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 视频播放器 -->
+                <div class="video-container">
+                    <div class="video-placeholder">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 课程内容 -->
+                <div class="lesson-content">
+                    <h2 class="section-heading">${content.overview.title}</h2>
+                    <div class="content-text">
+                        ${content.overview.content}
+                    </div>
+            `;
+            
+            // 添加其他部分（如果有）
+            if (content.howItWorks) {
+                html += `
+                    <h2 class="section-heading">${content.howItWorks.title}</h2>
+                    <div class="content-text">
+                        ${content.howItWorks.content}
+                    </div>
+                `;
+            }
+            
+            if (content.memoryTypes) {
+                html += `
+                    <h2 class="section-heading">${content.memoryTypes.title}</h2>
+                    <div class="content-text">
+                        ${content.memoryTypes.content}
+                    </div>
+                `;
+            }
+            
+            if (content.modelsSection) {
+                html += `
+                    <h2 class="section-heading">${content.modelsSection.title}</h2>
+                    <div class="content-text">
+                        ${content.modelsSection.content}
+                    </div>
+                `;
+            }
+            
+            if (content.promptsSection) {
+                html += `
+                    <h2 class="section-heading">${content.promptsSection.title}</h2>
+                    <div class="content-text">
+                        ${content.promptsSection.content}
+                    </div>
+                `;
+            }
+            
+            if (content.types) {
+                html += `
+                    <h2 class="section-heading">${content.types.title}</h2>
+                    <div class="content-text">
+                        ${content.types.content}
+                    </div>
+                `;
+            }
+            
+            // 添加代码示例（如果有）
+            if (content.codeExample) {
+                html += `
+                    <h2 class="section-heading">${content.codeExample.title}</h2>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-title">代码示例</div>
+                            <button class="copy-button" id="copyBtn">
+                                <i class="far fa-copy"></i>
+                                <span>复制</span>
+                            </button>
+                        </div>
+                        <div class="code-content" id="codeContent">
+                            ${content.codeExample.code}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 添加选项卡（如果有）
+            if (lessonId === 'agent-types') {
+                html += `
+                    <h2 class="section-heading">代理类型详解</h2>
+                    <div class="tabs">
+                        <div class="tab active" data-tab="zero-shot">Zero Shot ReAct</div>
+                        <div class="tab" data-tab="react-doc">ReAct Docstore</div>
+                        <div class="tab" data-tab="self-ask">Self Ask With Search</div>
+                    </div>
+
+                    <div class="tab-content active" id="zero-shot">
+                        <div class="content-text">
+                            <p><strong>Zero Shot ReAct</strong> 代理是最常用的代理类型之一。它根据工具的描述和用户输入决定使用哪些工具，而不需要任何示例。</p>
+                            <p>这种代理适用于大多数通用任务，特别是当您不确定需要哪些工具或工具的使用顺序时。</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="react-doc">
+                        <div class="content-text">
+                            <p><strong>ReAct Docstore</strong> 代理专门设计用于与文档存储交互。它使用"思考-行动-观察"循环来查找和检索文档。</p>
+                            <p>这种代理特别适合问答任务，其中答案包含在文档集合中。</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="self-ask">
+                        <div class="content-text">
+                            <p><strong>Self Ask With Search</strong> 代理专门设计用于回答需要分解为多个子问题的问题。它首先生成后续问题，然后使用搜索引擎查找答案。</p>
+                            <p>这种代理特别适合需要多步推理的复杂问题。</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 添加讨论区
+            html += `
+                </div>
+
+                <!-- 讨论区 -->
+                <div class="discussion-section">
+                    <div class="discussion-header">
+                        <h2 class="discussion-title">讨论区</h2>
+                        <button class="new-discussion-btn">
+                            <i class="fas fa-plus"></i>
+                            <span>新讨论</span>
+                        </button>
+                    </div>
+                    
+                    <ul class="discussion-list">
+            `;
+            
+            // 添加讨论项
+            content.discussion.forEach(discussion => {
+                html += `
+                    <li class="discussion-item">
+                        <div class="discussion-meta">
+                            <div class="discussion-author">${discussion.author}</div>
+                            <div class="discussion-date">${discussion.date}</div>
+                        </div>
+                        <div class="discussion-content">
+                            ${discussion.content}
+                        </div>
+                        <div class="discussion-actions">
+                            <div class="discussion-action">
+                                <i class="far fa-thumbs-up"></i>
+                                <span>${discussion.likes}</span>
+                            </div>
+                            <div class="discussion-action">
+                                <i class="far fa-comment"></i>
+                                <span>${discussion.replies} 回复</span>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            });
+            
+            html += `
+                    </ul>
+                </div>
+            `;
+            
+            // 更新内容区域
+            mainContent.innerHTML = html;
+            
+            // 重新绑定事件
+            bindEvents();
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 视频播放按钮
+            const playButton = document.querySelector('.play-button');
+            if (playButton) {
+                playButton.addEventListener('click', function() {
+                    const videoPlaceholder = document.querySelector('.video-placeholder');
+                    videoPlaceholder.innerHTML = '<div class="loader"></div><p style="margin-top: 20px;">视频加载中...</p>';
+                    
+                    // 模拟视频加载
+                    setTimeout(() => {
+                        videoPlaceholder.innerHTML = `
+                            <video controls style="width: 100%; height: 100%;">
+                                <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
+                                您的浏览器不支持视频标签。
+                            </video>
+                        `;
+                    }, 1500);
+                });
+            }
+            
+            // 复制代码按钮
+            const copyButton = document.getElementById('copyBtn');
+            if (copyButton) {
+                copyButton.addEventListener('click', function() {
+                    const codeContent = document.getElementById('codeContent').textContent;
+                    navigator.clipboard.writeText(codeContent).then(() => {
+                        this.innerHTML = '<i class="fas fa-check"></i><span>已复制</span>';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="far fa-copy"></i><span>复制</span>';
+                        }, 2000);
+                    });
+                });
+            }
+            
+            // 选项卡切换
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    document.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // 新讨论按钮
+            const newDiscussionBtn = document.querySelector('.new-discussion-btn');
+            if (newDiscussionBtn) {
+                newDiscussionBtn.addEventListener('click', function() {
+                    const discussionList = document.querySelector('.discussion-list');
+                    const newDiscussion = document.createElement('li');
+                    newDiscussion.className = 'discussion-item';
+                    newDiscussion.innerHTML = `
+                        <div class="discussion-meta">
+                            <div class="discussion-author">用户</div>
+                            <div class="discussion-date">刚刚</div>
+                        </div>
+                        <div class="discussion-content">
+                            <textarea placeholder="输入您的问题..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; min-height: 80px;"></textarea>
+                            <div style="margin-top: 10px; text-align: right;">
+                                <button style="background-color: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;">发布</button>
+                            </div>
+                        </div>
+                    `;
+                    discussionList.insertBefore(newDiscussion, discussionList.firstChild);
+                    
+                    // 聚焦到文本框
+                    newDiscussion.querySelector('textarea').focus();
+                    
+                    // 发布按钮事件
+                    newDiscussion.querySelector('button').addEventListener('click', function() {
+                        const textarea = newDiscussion.querySelector('textarea');
+                        if (textarea.value.trim() !== '') {
+                            newDiscussion.querySelector('.discussion-content').innerHTML = textarea.value;
+                            newDiscussion.innerHTML += `
+                                <div class="discussion-actions">
+                                    <div class="discussion-action">
+                                        <i class="far fa-thumbs-up"></i>
+                                        <span>0</span>
+                                    </div>
+                                    <div class="discussion-action">
+                                        <i class="far fa-comment"></i>
+                                        <span>0 回复</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                });
+            }
+            
+            // 讨论点赞功能
+            document.querySelectorAll('.discussion-action').forEach(action => {
+                action.addEventListener('click', function() {
+                    if (this.querySelector('.fa-thumbs-up')) {
+                        const countSpan = this.querySelector('span');
+                        let count = parseInt(countSpan.textContent);
+                        countSpan.textContent = count + 1;
+                        
+                        // 切换图标
+                        const icon = this.querySelector('i');
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        
+                        // 防止重复点击
+                        this.style.pointerEvents = 'none';
+                    }
+                });
+            });
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载默认课程内容
+            updateContent('intro');
+        });
+    </script>
+</body>
+</html>
