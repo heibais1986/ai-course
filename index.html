@@ -2194,9 +2194,6 @@ self_ask_agent.run("谁是美国第一位总统？他的副总统是谁？")`
                         if (videoLoading) {
                             videoLoading.classList.remove('show'); // 隐藏加载动画
                         }
-                        // (可选) 恢复占位图，并提示用户
-                        videoPlaceholder.style.display = 'block';
-                        alert('视频加载失败，请检查链接或网络。');
 
                         // 移除事件监听器
                         videoPlayer.removeEventListener('error', onError);
